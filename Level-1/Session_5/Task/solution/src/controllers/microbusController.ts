@@ -55,3 +55,52 @@ export const updateBus = (req: Request, res: Response) => {
 
   res.status(200).json(bus);
 };
+
+export const deleteBus = (req: Request, res: Response) => {
+  const id = Number(req.params.id);
+  const busIndex = fleet.findIndex((b) => b.id === id);
+
+  if (busIndex === -1) {
+    return res.status(404).json({ message: "Am Ashraf doesn't run that one" });
+  }
+
+  fleet.splice(busIndex, 1);
+  res.status(200).json({ message: "Microbus taken off the road successfully" });
+};
+
+export const filterByFare = (req: Request, res: Response) => {
+  const { maxFare } = req.query;
+
+  if (!maxFare || isNaN(Number(maxFare))) {
+    return res.status(400).json({ message: 'maxFare query parameter is required and must be a number' });
+  }
+
+  const filtered = fleet.filter((b) => b.farePerSeat <= Number(maxFare));
+  res.status(200).json(filtered);
+};
+
+export const getRatingByRater = (req: Request, res: Response) => {
+  const id = Number(req.params.id);
+  const rater = req.query.rater as string;
+
+  if (isNaN(id) || !rater) {
+    return res.status(400).json({ message: 'Both bus id and rater name are required' });
+  }
+
+  const bus = fleet.find((b) => b.id === id);
+  if (!bus) {
+    return res.status(404).json({ message: "Am Ashraf doesn't run that one" });
+  }
+
+  const ratingObj = bus.ratings.find((r) => rater in r);
+
+  if (!ratingObj) {
+    return res.status(200).json({ message: `${rater} hasn't rated this microbus yet` });
+  }
+
+  res.status(200).json({
+    id: bus.id,
+    rater: rater,
+    rate: ratingObj[rater]
+  });
+};
