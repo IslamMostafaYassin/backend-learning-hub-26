@@ -5,5 +5,7 @@ const router = Router();
 
 router.get('/', getAllBuses);
 router.get('/:id', getBusById);
+router.post('/', createBus);
+router.put('/:id', updateBus);
 
 export default router;
