@@ -19,10 +19,6 @@ export const getBusById = (req: Request, res: Response) => {
 export const createBus = (req: Request, res: Response) => {
   const { driverName, route, farePerSeat, seatsAvailable } = req.body;
 
-  if (!driverName || !route || farePerSeat === undefined || seatsAvailable === undefined) {
-    return res.status(400).json({ message: 'All fields (driverName, route, farePerSeat, seatsAvailable) are required' });
-  }
-
   const newId = (fleet.at(-1)?.id || 0) + 1;
 
   const newBus = {
